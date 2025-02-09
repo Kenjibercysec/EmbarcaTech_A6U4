@@ -1,4 +1,4 @@
 [wokwi]
 version = 1
-firmware = 'build/Serial_Com.uf2'
-elf = 'build/Serial_Com.elf'
+firmware = 'build/EmbarcaTech_A6U4.uf2'
+elf = 'build/EmbarcaTech_A6U4.elf'
