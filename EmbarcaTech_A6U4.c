@@ -73,3 +73,58 @@ uint matrix_rgb(float r, float g, float b){
 }
   
 
+void callback_button(uint gpiom , uint32_t events){
+    uint time = to_ms_since_boot(get_absolute_time());
+ if (time - actual_time > 250) { // Condição para evitar múltiplos pressionamentos (debounce)
+        actual_time = time;       // Atualiza o tempo
+        if (gpio == BOTAO_A) {  // Verifica se o botão A foi pressionado
+            GREEN_LED_OFF = !GREEN_LED_OFF; // Inverte o estado do LED verde
+            gpio_put(LED_PIN_GREEN, GREEN_LED_OFF);  // Acende o LED verde
+                    if (GREEN_LED_OFF == false){
+                        
+                        printf("LED verde desligado\n");
+                    } else {
+                        printf("LED verde ligado\n");
+                    }
+ } else if (gpio == BOTAO_B) { // Verifica se o botão B foi pressionado
+            BLUE_LED_OFF = !BLUE_LED_OFF; // Inverte o estado do LED azul
+         gpio_put(LED_PIN_BLUE, BLUE_LED_OFF);  // Acende o LED verde
+                 if (BLUE_LED_OFF == false){
+                            printf("LED azul desligado\n");
+                 } else {
+                            printf("LED azul ligado\n");
+             }
+}
+
+
+//-------------------------------------------
+
+// Atualização do display
+ssd1306_fill(&ssd, 0); //limpa o display
+
+gpio_get(LED_PIN_GREEN) ? ssd1306_draw_string(&ssd, "Green LED: ON", 10, 10) :
+                        ssd1306_draw_string(&ssd, "Green LED: OFF", 10, 10);
+gpio_get(LED_PIN_BLUE) ? ssd1306_draw_string(&ssd, "Blue LED: ON", 10, 30) :
+                        ssd1306_draw_string(&ssd, "Blue LED: OFF", 10, 30);
+ssd1306_send_data(&ssd);
+
+//-------------------------------------------
+
+    stdio_init_all(); 
+    gpio_init(LED_PIN);
+    gpio_init(LED_PIN_RED);
+    gpio_init(LED_PIN_GREEN);
+    gpio_init(LED_PIN_BLUE);
+    gpio_init(BOTAO_A);
+    gpio_init(BOTAO_B);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+    gpio_set_dir(LED_PIN_RED, GPIO_OUT);
+    gpio_set_dir(LED_PIN_GREEN, GPIO_OUT);
+    gpio_set_dir(LED_PIN_BLUE, GPIO_OUT);
+    gpio_set_dir(BOTAO_A, GPIO_IN);
+    gpio_set_dir(BOTAO_B, GPIO_IN);
+    gpio_pull_up(BOTAO_A);
+    gpio_pull_up(BOTAO_B);
+    gpio_put(GREEN_LED_OFF, false);
+    gpio_put(BLUE_LED_OFF, false);
+    gpio_put(RED_LED_OFF, false);
