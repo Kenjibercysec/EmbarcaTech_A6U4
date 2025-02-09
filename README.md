@@ -107,7 +107,7 @@ ninja
 
 ---
 
-## 📜 Licença
+## Vídeo
 
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
+Link do vídeo de teste: https://youtube.com/shorts/_1GnDpzm_Rg
 
