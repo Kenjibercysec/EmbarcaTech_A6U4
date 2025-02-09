@@ -30,42 +30,38 @@ include(pico_sdk_import.cmake)
 
 project(EmbarcaTech_A6U4 C CXX ASM)
 
+
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(EmbarcaTech_A6U4 EmbarcaTech_A6U4.c )
+add_executable(EmbarcaTech_A6U4 EmbarcaTech_A6U4.c)
 
 pico_set_program_name(EmbarcaTech_A6U4 "EmbarcaTech_A6U4")
 pico_set_program_version(EmbarcaTech_A6U4 "0.1")
 
-# Generate PIO header
-pico_generate_pio_header(EmbarcaTech_A6U4 ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
-
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(EmbarcaTech_A6U4 0)
-pico_enable_stdio_usb(EmbarcaTech_A6U4 0)
+pico_enable_stdio_uart(EmbarcaTech_A6U4 1)
+pico_enable_stdio_usb(EmbarcaTech_A6U4 1)
 
+pico_generate_pio_header(EmbarcaTech_A6U4 ${CMAKE_CURRENT_LIST_DIR}/EmbarcaTech_A6U4.pio)
+
+target_sources(EmbarcaTech_A6U4 PRIVATE EmbarcaTech_A6U4.c inc/ssd1306.c)
 # Add the standard library to the build
 target_link_libraries(EmbarcaTech_A6U4
-        pico_stdlib)
+        pico_stdlib
+        hardware_pio
+        hardware_i2c
+        hardware_uart
+        hardware_clocks
+)
 
 # Add the standard include files to the build
 target_include_directories(EmbarcaTech_A6U4 PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/inc
 )
-
-# Add any user requested libraries
-target_link_libraries(EmbarcaTech_A6U4 
-        hardware_spi
-        hardware_i2c
-        hardware_dma
-        hardware_pio
-        hardware_timer
-        hardware_clocks
-        
-        )
 
 pico_add_extra_outputs(EmbarcaTech_A6U4)
 
