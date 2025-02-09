@@ -94,3 +94,12 @@
 4398	5095	7608415335674820	CMakeFiles/EmbarcaTech_A6U4.dir/C_/Users/silas/.pico-sdk/sdk/2.1.0/lib/tinyusb/src/common/tusb_fifo.c.obj	eb5b7348405bf5f7
 4421	5167	7608415335920254	CMakeFiles/EmbarcaTech_A6U4.dir/C_/Users/silas/.pico-sdk/sdk/2.1.0/src/rp2_common/hardware_pio/pio.c.obj	28601f440675d243
 5168	5491	7608415343350526	EmbarcaTech_A6U4.elf	a6a40e1b63bdac19
+31	337	7608436313015561	CMakeFiles/EmbarcaTech_A6U4.dir/EmbarcaTech_A6U4.c.obj	6eae58cd797ef47f
+36	395	7608436313075259	CMakeFiles/EmbarcaTech_A6U4.dir/inc/ssd1306.c.obj	a5588b09f6e5e899
+396	713	7608436316658078	EmbarcaTech_A6U4.elf	a6a40e1b63bdac19
+32	382	7608461605324468	CMakeFiles/EmbarcaTech_A6U4.dir/EmbarcaTech_A6U4.c.obj	6eae58cd797ef47f
+38	429	7608461605379586	CMakeFiles/EmbarcaTech_A6U4.dir/inc/ssd1306.c.obj	a5588b09f6e5e899
+430	776	7608461609296001	EmbarcaTech_A6U4.elf	a6a40e1b63bdac19
+34	392	7608463637862868	CMakeFiles/EmbarcaTech_A6U4.dir/EmbarcaTech_A6U4.c.obj	6eae58cd797ef47f
+39	445	7608463637912768	CMakeFiles/EmbarcaTech_A6U4.dir/inc/ssd1306.c.obj	a5588b09f6e5e899
+447	854	7608463641992847	EmbarcaTech_A6U4.elf	a6a40e1b63bdac19
