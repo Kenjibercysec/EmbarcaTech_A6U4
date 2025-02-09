@@ -4,7 +4,7 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "hardware/uart.h"
-#include "Serial_Com.pio.h"
+#include "EmbarcaTech_A6U4.pio.h"
 #include "inc/font.h"
 #include "inc/ssd1306.h"
 
@@ -110,21 +110,88 @@ ssd1306_send_data(&ssd);
 
 //-------------------------------------------
 
-    stdio_init_all(); 
-    gpio_init(LED_PIN);
-    gpio_init(LED_PIN_RED);
-    gpio_init(LED_PIN_GREEN);
-    gpio_init(LED_PIN_BLUE);
-    gpio_init(BOTAO_A);
-    gpio_init(BOTAO_B);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-    gpio_set_dir(LED_PIN_RED, GPIO_OUT);
-    gpio_set_dir(LED_PIN_GREEN, GPIO_OUT);
-    gpio_set_dir(LED_PIN_BLUE, GPIO_OUT);
-    gpio_set_dir(BOTAO_A, GPIO_IN);
-    gpio_set_dir(BOTAO_B, GPIO_IN);
-    gpio_pull_up(BOTAO_A);
-    gpio_pull_up(BOTAO_B);
-    gpio_put(GREEN_LED_OFF, false);
-    gpio_put(BLUE_LED_OFF, false);
-    gpio_put(RED_LED_OFF, false);
+stdio_init_all(); 
+gpio_init(LED_PIN);
+gpio_init(LED_PIN_RED);
+gpio_init(LED_PIN_GREEN);
+gpio_init(LED_PIN_BLUE);
+gpio_init(BOTAO_A);
+gpio_init(BOTAO_B);
+gpio_set_dir(LED_PIN, GPIO_OUT);
+gpio_set_dir(LED_PIN_RED, GPIO_OUT);
+gpio_set_dir(LED_PIN_GREEN, GPIO_OUT);
+gpio_set_dir(LED_PIN_BLUE, GPIO_OUT);
+gpio_set_dir(BOTAO_A, GPIO_IN);
+gpio_set_dir(BOTAO_B, GPIO_IN);
+gpio_pull_up(BOTAO_A);
+gpio_pull_up(BOTAO_B);
+gpio_put(GREEN_LED_OFF, false);
+gpio_put(BLUE_LED_OFF, false);
+gpio_put(RED_LED_OFF, false);
+
+    //-------------------------------------------
+
+    // Inicialização do display
+i2c_init(I2C_PORT, 400 * 1000);
+gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); 
+gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); 
+gpio_pull_up(I2C_SDA); 
+gpio_pull_up(I2C_SCL); 
+ssd.i2c_port = I2C_PORT;
+ssd.address = display_address;
+ssd.width = 128;
+ssd.height = 64;
+ssd.external_vcc = false;
+ssd1306_init(&ssd, 128, 64, false, display_address, I2C_PORT);
+ssd1306_config(&ssd);   
+
+
+//-------------------------------------------
+
+// Verificação do clock
+printf("iniciando a transmissão PIO");
+if (frequenciaClock){
+    printf("clock set to %ld\n", clock_get_hz(clk_sys));
+}else if(!frequenciaClock){
+    printf("erro ao configurar a frequencia do clock");
+}
+
+
+//-------------------------------------------
+
+// Configuração dos botões com interrupções
+gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &callback_button);
+gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &callback_button);
+
+// Inicialização da matriz de LEDs
+uint offset = pio_add_program(pio, &pio_matrix_program);
+sm = pio_claim_unused_sm(pio, true);
+pio_matrix_program_init(pio, sm, offset, LED_PIN);
+
+// Apaga os LEDs ao iniciar o programa
+desenho_pio(apagar_leds, valor_led, pio, sm, r, g, b);
+
+// Loop principal para leitura de caracteres
+while (true) {
+    int c = getchar_timeout_us(0); // Verifica se há caractere disponível sem bloquear
+
+    if (c != PICO_ERROR_TIMEOUT) { // Se um caractere foi recebido
+        printf("Caractere recebido: %c\n", (char)c);
+        int numero = c - '0';
+
+        ssd1306_fill(&ssd, false);  // Limpa o display
+        ssd1306_draw_char(&ssd, (char)c, 20, 30); // Desenha o caractere no display
+        ssd1306_send_data(&ssd);    // Atualiza o display
+
+        if (numero != numero_anterior) { // Se o número é diferente do anterior
+            numero_anterior = numero;    // Atualiza o número anterior
+
+            if (numero >= 0 && numero <= 9) { // Se o número está entre 0 e 9
+                desenho_pio(numeros[numero], valor_led, pio, sm, r, g, b); // Desenha o número na matriz de LEDs
+            } else {
+                desenho_pio(apagar_leds, valor_led, pio, sm, r, g, b); // Apaga os LEDs
+                printf("Caractere inválido!\n"); // Informa caractere inválido
+            }
+        }
+    }
+}
